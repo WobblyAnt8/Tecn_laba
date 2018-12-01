@@ -1,12 +1,57 @@
-п»ї#include <string>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
 using namespace std;
 
-void enter(string word, int cword);	 //ГґГіГ­ГЄГ¶ГЁГї Г¤Г«Гї ГўГ»ГўГ®Г¤Г 
-void work(ifstream& in); //ГґГіГ­ГЄГ¶ГЁГї Г¤Г«Гї Г°Г ГЎГ®ГІГ» Г± ГґГ Г©Г«Г®Г¬   
+int Exception(ifstream& inn)
+{
+	if (!inn.is_open())
+	{
+		cout << "Файл не открыт.\n"; // если файл не открылся
+		return 1;
+	}
+	else if (inn.peek() == EOF)
+	{
+		cout << "Файл пустой.\n"; // если файл пустой
+		return 1;
+	}
+}
+
+void work(ifstream& in)
+{
+	int flag = Exception(in);
+	if (flag == 1)
+		return;
+
+	string word;//слово
+	cout << "Введите слово: ";
+
+	string search;
+	cin >> search;
+
+	string line;//предложение
+	stringstream ss;	//строковый поток
+	int cnt;//счётчик
+
+	while (getline(in, line)) //считываем по предложению
+	{
+		stringstream tmp;//буфер
+		tmp << line;
+		cnt = 0;
+		while (tmp >> word) //разбиваем на слова
+		{
+			if (word == search) //если нашли слово
+			{
+				++cnt;
+			}
+		}
+		ss << line << ' ' << cnt << '\n';
+	}
+	cout << ss.str();
+}
+
 
 int main()
 {
@@ -15,36 +60,6 @@ int main()
 
 	work(io);
 
-	io.close();//Г§Г ГЄГ°Г»ГўГ ГҐГ¬ ГґГ Г©Г«										   
-	system("pause>>void");
-}
-
-void enter(string word, int cword)
-{
-	cout << "count = " << cword << '\n';
-	cout << word;// ГўГ»ГўГ®Г¤ГЁГ¬ ГЇГ°ГҐГ¤Г«Г®Г¦ГҐГ­ГЁГҐ
-}
-
-void work(ifstream& in)
-{
-	string line;//Г±Г«Г®ГўГ®
-	stringstream ss;	//Г±ГІГ°Г®ГЄГ®ГўГ»Г© ГЇГ®ГІГ®ГЄ
-	int maxlen = -1; //Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ
-	int cnt = 1;//Г±Г·ВёГІГ·ГЁГЄ 1 ГІГ ГЄ ГЄГ ГЄ Г®Г¤Г­Г® Г±Г«Г®ГўГ® ГўГ±ГҐГЈГ¤Г  ГҐГ±ГІГј
-	while (in >> line) {//Г±Г·ГЁГІГ»ГўГ ГҐГ¬ ГЇГ® ГЇГ°ГҐГ¤Г«Г®Г¦ГҐГ­ГЁГѕ
-		int o = line.length();
-		//ГҐГ±Г«ГЁ ГЎГ®Г«ГјГёГҐ ГЇГ°ГҐГ¤Г»Г¤ГіГ№ГҐГЈГ®
-		if (o > maxlen) {
-			maxlen = o;
-			cnt = 1;
-			ss.str(std::string());//Г®Г·ГЁГ№Г ГҐГ¬
-			ss << line;
-		}
-		//ГҐГ±Г«ГЁ Г¤Г«Г­Г  Г°Г ГўГ­Г  Г¬Г ГЄГ±ГЁГ¬Г Г«ГјГ­Г®Г©
-		else if (o == maxlen && ss.str() == line) {
-			++cnt;
-		}
-
-	}
-	enter(ss.str(), cnt);
+	io.close();//закрываем файл										   
+	system("pause");
 }
