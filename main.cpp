@@ -5,61 +5,47 @@
 
 using namespace std;
 
-int Exception(ifstream& inn)
+int scan(string line, string search)
 {
-	if (!inn.is_open())
+	int count = 0;
+	while (line.find(search) != string::npos)
 	{
-		cout << "Файл не открыт.\n"; // если файл не открылся
-		return 1;
+		if(( line.find(search) == 0|| line[line.find(search) - 1] == ' ') && (line[line.find(search) + search.size()] == ' ' || line[line.find(search) + search.size()] == '\0'))
+			count++;
+		line.erase(line.find(search), search.size());
 	}
-	else if (inn.peek() == EOF)
-	{
-		cout << "Файл пустой.\n"; // если файл пустой
-		return 1;
-	}
+	return count;
 }
 
 void work(ifstream& in)
 {
-	int flag = Exception(in);
-	if (flag == 1)
-		return;
-
-	string word;//слово
 	cout << "Введите слово: ";
-
 	string search;
 	cin >> search;
-
-	string line;//предложение
-	stringstream ss;	//строковый поток
-	int cnt;//счётчик
-
-	while (getline(in, line)) //считываем по предложению
+	string line;
+	while (!in.eof()) 
 	{
-		stringstream tmp;//буфер
-		tmp << line;
-		cnt = 0;
-		while (tmp >> word) //разбиваем на слова
-		{
-			if (word == search) //если нашли слово
-			{
-				++cnt;
-			}
-		}
-		ss << line << ' ' << cnt << '\n';
+		getline(in, line);
+		int c = scan(line, search);
+		cout << line << ' ' << c << endl;
 	}
-	cout << ss.str();
 }
-
 
 int main()
 {
 	setlocale(LC_ALL, "");
-	ifstream io("input.txt");
-
-	work(io);
-
-	io.close();//закрываем файл										   
+	ifstream in;
+	in.exceptions(ifstream::failbit);
+	string name = "input.txt";
+	try
+	{
+	    in.open(name);
+		work(in);
+		in.close();
+	}
+	catch (const ifstream::failure& exc)
+	{
+		cout << "Ошибка при открытии файла" << endl<< exc.what() << endl<<endl;
+	}
 	system("pause");
 }
